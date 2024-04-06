@@ -23,7 +23,7 @@ SCF_DEFAULT_CONCURRENCY = int(os.environ.get("SCF_DEFAULT_CONCURRENCY", "1"))
 TENCENT_CLOUD_SECRET_ID = os.environ["TENCENT_CLOUD_SECRET_ID"]
 TENCENT_CLOUD_SECRET_KEY = os.environ["TENCENT_CLOUD_SECRET_KEY"]
 
-TENCENT_CLIENT = scf_client.ScfClient(
+TENCENT_SCF_CLIENT = scf_client.ScfClient(
     credential.Credential(
         TENCENT_CLOUD_SECRET_ID,
         TENCENT_CLOUD_SECRET_KEY,
@@ -42,7 +42,7 @@ def wait_until(version: str, status: str):
         req = new_default_request(models.GetFunctionRequest())
         req.Qualifier = version
         req.ShowCode = "FALSE"
-        resp = TENCENT_CLIENT.GetFunction(req)
+        resp = TENCENT_SCF_CLIENT.GetFunction(req)
         if resp.Status == status:
             return
         time.sleep(1)
@@ -54,7 +54,7 @@ def publish(image_repo: str, image_tag: str) -> str:
     req.Code.ImageConfig = models.ImageConfig()
     req.Code.ImageConfig.ImageType = "personal"
     req.Code.ImageConfig.ImageUri = f"{image_repo}:{image_tag}"
-    resp = TENCENT_CLIENT.UpdateFunctionCode(req)
+    resp = TENCENT_SCF_CLIENT.UpdateFunctionCode(req)
     print(f"[*] Updated SCF function {SCF_FUNCTION} with image {image_repo}:{image_tag}. Response: {resp}")
 
     # Wait until $LATEST version online.
@@ -62,7 +62,7 @@ def publish(image_repo: str, image_tag: str) -> str:
 
     # Publish $LATEST version.
     req = new_default_request(models.PublishVersionRequest())
-    resp = TENCENT_CLIENT.PublishVersion(req)
+    resp = TENCENT_SCF_CLIENT.PublishVersion(req)
     print(f"[*] Published SCF version: {resp.FunctionVersion}. Response: {resp}")
 
     return resp.FunctionVersion
@@ -76,37 +76,37 @@ def deploy(version: str):
         req = new_default_request(models.PutProvisionedConcurrencyConfigRequest())
         req.Qualifier = version
         req.VersionProvisionedConcurrencyNum = SCF_DEFAULT_CONCURRENCY
-        resp = TENCENT_CLIENT.PutProvisionedConcurrencyConfig(req)
+        resp = TENCENT_SCF_CLIENT.PutProvisionedConcurrencyConfig(req)
         print(f"[*] Updated provisioned concurrency: {resp}")
 
     # Update traffic config.
     req = new_default_request(models.UpdateAliasRequest())
     req.Name = "$DEFAULT"
     req.FunctionVersion = version
-    resp = TENCENT_CLIENT.UpdateAlias(req)
+    resp = TENCENT_SCF_CLIENT.UpdateAlias(req)
     print(f"[*] Updated $DEFAULT traffic: {resp}")
 
 def cleanup(version: str):
     # Delete outdated provisioned concurrency allocations.
     req = new_default_request(models.GetProvisionedConcurrencyConfigRequest())    
-    provision = TENCENT_CLIENT.GetProvisionedConcurrencyConfig(req)
+    provision = TENCENT_SCF_CLIENT.GetProvisionedConcurrencyConfig(req)
     for allocation in provision.Allocated:
         if allocation.Qualifier == version:
             continue
         req = new_default_request(models.DeleteProvisionedConcurrencyConfigRequest())
         req.Qualifier = allocation.Qualifier
-        deleted = TENCENT_CLIENT.DeleteProvisionedConcurrencyConfig(req)
+        deleted = TENCENT_SCF_CLIENT.DeleteProvisionedConcurrencyConfig(req)
         print(f"[*] Deleted outdated provisioned concurrency allocation for version {allocation.Qualifier}: {deleted}")
 
     # Delete outdated versions.
     req = new_default_request(models.ListVersionByFunctionRequest())
-    versions = TENCENT_CLIENT.ListVersionByFunction(req)
+    versions = TENCENT_SCF_CLIENT.ListVersionByFunction(req)
     for v in versions.FunctionVersion:
         if v == "$LATEST" or v == version:
             continue
         req = new_default_request(models.DeleteFunctionRequest())
         req.Qualifier = v
-        deleted = TENCENT_CLIENT.DeleteFunction(req)
+        deleted = TENCENT_SCF_CLIENT.DeleteFunction(req)
         print(f"[*] Deleted outdated version {v}: {deleted}")
 
 if __name__ == "__main__":
