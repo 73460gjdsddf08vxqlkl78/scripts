@@ -14,7 +14,7 @@ from tencentcloud.scf.v20180416 import scf_client, models
 SCF_REGION = os.environ["SCF_REGION"]
 SCF_NAMESPACE = os.environ["SCF_NAMESPACE"]
 SCF_FUNCTION = os.environ["SCF_FUNCTION"]
-SCF_ENABLE_CONCURRENCY = os.environ.get("SCF_ENABEL_CONCURRENCY", "false").lower() == "true"
+SCF_ENABLE_CONCURRENCY = os.environ.get("SCF_ENABLE_CONCURRENCY", "false").lower() == "true"
 SCF_DEFAULT_CONCURRENCY = int(os.environ.get("SCF_DEFAULT_CONCURRENCY", "1"))
 
 ###########################################################
