@@ -34,7 +34,7 @@ def check_file_exists(target: str) -> bool:
         COS_CLIENT.head_object(Bucket=COS_BUCKET, Key=target)
         return True
     except CosServiceError as e:
-        if e.get_status_code() != 404:
+        if e.get_status_code() == 404 or e.get_error_code() == "NoSuchResource":
             return False
         print(f"[!] Failed to check file '{target}' in COS. Error: {e}")
         return False
