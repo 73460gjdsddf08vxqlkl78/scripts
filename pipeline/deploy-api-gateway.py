@@ -30,7 +30,7 @@ TENCENT_API_GATEWAY_CLIENT = apigateway_client.ApigatewayClient(
 
 def update_cos_backend(api: models.DescribeApiResponse, args: argparse.Namespace):
     request = models.ModifyApiRequest()
-    request.from_json_string(api.to_json_string())
+    request.from_json_string(api.Result.to_json_string())
     request.ServiceType = "COS"
     request.ServiceConfig = models.ServiceConfig()
     request.ServiceConfig.from_json_string(
@@ -54,7 +54,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Deploy API Gateway")
     parser.add_argument("--type", type=str, required=True, choices=["COS"], help="The type of API Gateway backend")
     group_cos = parser.add_argument_group("COS")
-    group_cos.add_argument("--region", type=str, help="The region of COS")
     group_cos.add_argument("--bucket", type=str, help="The bucket of COS")
     group_cos.add_argument("--path", type=str, help="The path of COS files")
     args = parser.parse_args()
