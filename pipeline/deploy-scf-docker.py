@@ -15,8 +15,11 @@ SCF_REGION = os.environ["SCF_REGION"]
 SCF_NAMESPACE = os.environ["SCF_NAMESPACE"]
 SCF_FUNCTION = os.environ["SCF_FUNCTION"]
 SCF_DEPLOY_ALIAS = os.environ.get("SCF_DEPLOY_ALIAS", "$DEFAULT")
+
 SCF_ENABLE_CONCURRENCY = os.environ.get("SCF_ENABLE_CONCURRENCY", "false").lower() == "true"
 SCF_DEFAULT_CONCURRENCY = int(os.environ.get("SCF_DEFAULT_CONCURRENCY", "1"))
+
+SCF_ENABLE_CLEANUP = os.environ.get("SCF_ENABLE_CLEANUP", "true").lower() == "true"
 
 ###########################################################
 # Setup Tencent Cloud Client
@@ -88,6 +91,9 @@ def deploy(version: str):
     print(f"[*] Redirect {SCF_DEPLOY_ALIAS} traffic: {resp}")
 
 def cleanup(version: str):
+    if not SCF_ENABLE_CLEANUP:
+        return
+
     # Delete outdated provisioned concurrency allocations.
     req = new_default_request(models.GetProvisionedConcurrencyConfigRequest())
     provision = TENCENT_SCF_CLIENT.GetProvisionedConcurrencyConfig(req)
