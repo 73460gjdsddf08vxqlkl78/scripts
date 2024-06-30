@@ -14,6 +14,7 @@ from tencentcloud.scf.v20180416 import scf_client, models
 SCF_REGION = os.environ["SCF_REGION"]
 SCF_NAMESPACE = os.environ["SCF_NAMESPACE"]
 SCF_FUNCTION = os.environ["SCF_FUNCTION"]
+SCF_DEPLOY_ALIAS = os.environ.get("SCF_DEPLOY_ALIAS", "$DEFAULT")
 SCF_ENABLE_CONCURRENCY = os.environ.get("SCF_ENABLE_CONCURRENCY", "false").lower() == "true"
 SCF_DEFAULT_CONCURRENCY = int(os.environ.get("SCF_DEFAULT_CONCURRENCY", "1"))
 
@@ -81,14 +82,14 @@ def deploy(version: str):
 
     # Update traffic config.
     req = new_default_request(models.UpdateAliasRequest())
-    req.Name = "$DEFAULT"
+    req.Name = SCF_DEPLOY_ALIAS
     req.FunctionVersion = version
     resp = TENCENT_SCF_CLIENT.UpdateAlias(req)
-    print(f"[*] Updated $DEFAULT traffic: {resp}")
+    print(f"[*] Redirect {SCF_DEPLOY_ALIAS} traffic: {resp}")
 
 def cleanup(version: str):
     # Delete outdated provisioned concurrency allocations.
-    req = new_default_request(models.GetProvisionedConcurrencyConfigRequest())    
+    req = new_default_request(models.GetProvisionedConcurrencyConfigRequest())
     provision = TENCENT_SCF_CLIENT.GetProvisionedConcurrencyConfig(req)
     for allocation in provision.Allocated:
         if allocation.Qualifier == version:
