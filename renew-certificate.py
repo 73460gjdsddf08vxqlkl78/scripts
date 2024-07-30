@@ -54,6 +54,17 @@ def download_certificate(certificateID: str) -> bytes:
         zipFile.extractall("/tmp")
         return zipFile.read(f"{DOMAIN}.pem")
 
+def upload_certificate(keyPath: str, certificatePath: str):
+    req = models.UploadCertificateRequest()
+
+    with open(keyPath, "r") as f:
+        req.CertificatePrivateKey = f.read()
+    with open(certificatePath, "r") as f:
+        req.CertificatePublicKey = f.read()
+
+    resp = TENCENT_SSL_CLIENT.UploadCertificate(req)
+    print(f"[*] Uploaded certificate. Response: {resp}")
+
 def update_certificate(certificateID: str, keyPath: str, certificatePath: str):
     req = models.UpdateCertificateInstanceRequest()
     req.OldCertificateId = certificateID
