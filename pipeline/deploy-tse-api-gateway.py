@@ -27,28 +27,6 @@ TENCENT_API_GATEWAY_CLIENT = tse_client.TseClient(
 )
 
 
-def update_cos_backend(api: models.DescribeApiResponse, args: argparse.Namespace):
-    request = models.ModifyApiRequest()
-    request.from_json_string(api.Result.to_json_string())
-    request.ServiceType = "COS"
-    request.ServiceConfig = models.ServiceConfig()
-    request.ServiceConfig.from_json_string(
-        f"""
-        {{
-            "CosConfig": {{
-                "Action": "GetObject",
-                "BucketName": "{args.bucket}",
-                "Authorization": true,
-                "PathMatchMode": "FullPath"
-            }},
-            "Path": "{args.path}"
-        }}
-        """
-    )
-    response = TENCENT_API_GATEWAY_CLIENT.ModifyApi(request)
-    print(f"[*] Updated API Gateway Config: {response}")
-
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Deploy TSE API Gateway")
     parser.add_argument("--name", type=str, required=True, help="The name of API Gateway service")
