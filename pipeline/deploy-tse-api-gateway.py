@@ -29,11 +29,12 @@ TENCENT_API_GATEWAY_CLIENT = tse_client.TseClient(
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Deploy TSE API Gateway")
+    parser.add_argument("--id", type=str, required=True, help="The ID of API Gateway service")
     parser.add_argument("--name", type=str, required=True, help="The name of API Gateway service")
     parser.add_argument("--protocol", type=str, default="https", choices=["http", "https", "tcp", "udp"], help="The protocol of API Gateway service")
     parser.add_argument("--path", type=str, default="/", help="The path of API Gateway service")
 
-    parser.add_argument("--type", type=str, required=True, choices=["Kubernetes", "Registry", "IPList", "HostIP", "Scf"], help="The upstream type of API Gateway service")
+    parser.add_argument("--type", type=str, required=True, choices=["Kubernetes", "Registry", "IPList", "HostIP", "Scf"], help="The type of API Gateway upstream service")
     group_hostip = parser.add_argument_group("HostIP")
     group_hostip.add_argument("--host", type=str, help="The IP or host of upstream server.")
     group_hostip.add_argument("--port", type=int, help="The port of upstream server.")
@@ -42,6 +43,7 @@ if __name__ == "__main__":
     # Update API Gateway service.
     request = models.ModifyCloudNativeAPIGatewayServiceRequest()
     request.GatewayId = API_GATEWAY_ID
+    request.ID = args.id
     request.Name = args.name
     request.Protocol = args.protocol
     request.Path = args.path
