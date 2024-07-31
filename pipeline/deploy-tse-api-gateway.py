@@ -33,6 +33,8 @@ if __name__ == "__main__":
     parser.add_argument("--name", type=str, required=True, help="The name of API Gateway service")
     parser.add_argument("--protocol", type=str, default="https", choices=["http", "https", "tcp", "udp"], help="The protocol of API Gateway service")
     parser.add_argument("--path", type=str, default="/", help="The path of API Gateway service")
+    parser.add_argument("--timeout", type=int, default=60000, help="The timeout of upstream server (milliseconds)")
+    parser.add_argument("--retries", type=int, default=0, help="The number of retries for upstream server")
 
     parser.add_argument("--type", type=str, required=True, choices=["Kubernetes", "Registry", "IPList", "HostIP", "Scf"], help="The type of API Gateway upstream service")
     group_hostip = parser.add_argument_group("HostIP")
@@ -47,6 +49,8 @@ if __name__ == "__main__":
     request.Name = args.name
     request.Protocol = args.protocol
     request.Path = args.path
+    request.Timeout = args.timeout
+    request.Retries = args.retries
 
     request.UpstreamType = args.type
     request.UpstreamInfo = models.KongUpstreamInfo()
