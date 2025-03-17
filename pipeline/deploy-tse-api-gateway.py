@@ -8,7 +8,6 @@ from tencentcloud.tse.v20201207 import tse_client, models
 ###########################################################
 # API Gateway Config
 ###########################################################
-
 API_GATEWAY_REGION = os.environ["API_GATEWAY_REGION"]
 API_GATEWAY_ID = os.environ["API_GATEWAY_ID"]
 

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import argparse
 import os
 import sys
 from concurrent.futures import ThreadPoolExecutor
@@ -10,7 +11,6 @@ from qcloud_cos.cos_exception import CosClientError, CosServiceError
 ###########################################################
 # COS Config
 ###########################################################
-
 COS_REGION = os.environ["COS_REGION"]
 COS_BUCKET = os.environ["COS_BUCKET"]
 COS_UPLOAD_RETRY = 3
@@ -18,7 +18,6 @@ COS_UPLOAD_RETRY = 3
 ###########################################################
 # Setup Tencent Cloud Client
 ###########################################################
-
 TENCENT_CLOUD_SECRET_ID = os.environ["TENCENT_CLOUD_SECRET_ID"]
 TENCENT_CLOUD_SECRET_KEY = os.environ["TENCENT_CLOUD_SECRET_KEY"]
 
@@ -62,7 +61,6 @@ def upload_folder(source: str, target: str):
 
 
 if __name__ == "__main__":
-    import argparse
     parser = argparse.ArgumentParser(description="Upload file/folder to COS.")
     parser.add_argument("source", help="The local path of file/folder to upload.", type=str)
     parser.add_argument("target", help="The target path in COS bucket.", type=str)

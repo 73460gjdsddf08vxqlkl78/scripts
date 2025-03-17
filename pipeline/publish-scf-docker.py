@@ -10,7 +10,6 @@ from tencentcloud.scf.v20180416 import scf_client, models
 ###########################################################
 # SCF Config
 ###########################################################
-
 SCF_REGION = os.environ["SCF_REGION"]
 SCF_NAMESPACE = os.environ["SCF_NAMESPACE"]
 SCF_FUNCTION = os.environ["SCF_FUNCTION"]
