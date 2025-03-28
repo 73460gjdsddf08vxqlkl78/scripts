@@ -37,7 +37,7 @@ def search_latest_certificate(domain: str) -> str:
     resp = TENCENT_SSL_CLIENT.DescribeCertificates(req)
     return resp.Certificates[0].CertificateId
 
-def download_certificate(domain: str,certificateID: str) -> bytes:
+def download_certificate(domain: str, certificateID: str) -> bytes:
     req = models.DownloadCertificateRequest()
     req.CertificateId = certificateID
     resp = TENCENT_SSL_CLIENT.DownloadCertificate(req)
